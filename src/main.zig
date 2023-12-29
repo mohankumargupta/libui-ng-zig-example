@@ -6,6 +6,8 @@ pub fn on_closing(_: *ui.Window, _: ?*void) ui.Window.ClosingAction {
     return .should_close;
 }
 
+//fn shouldQuit(_: ?*ui.MenuItem, _: ?*ui.Window, _: ?*anyopaque) callconv(.C) void {}
+
 pub fn main() !void {
     var init_data = ui.InitData{
         .options = .{ .Size = 0 },
@@ -17,7 +19,14 @@ pub fn main() !void {
     };
     defer ui.Uninit();
 
-    const main_window = try ui.Window.New("Fly with IguanaAir", 320, 240, .hide_menubar);
+    const menu = try ui.Menu.New("File");
+    const quit = try menu.AppendQuitItem();
+    _ = quit;
+    //quit.OnClicked(shouldQuit, null);
+    //_ = quit;
+    //quit.uiMenuItemOnClicked(shouldQuit, null);
+
+    const main_window = try ui.Window.New("VSCode Portable Installer", 320, 240, .hide_menubar);
     const vbox = try ui.Box.New(.Vertical);
 
     var app = App{
@@ -26,23 +35,29 @@ pub fn main() !void {
         .leave_status = try ui.Label.New(""),
         .return_datetime = try ui.DateTimePicker.New(.Date),
         .return_status = try ui.Label.New(""),
-        .book = try ui.Button.New("Book"),
+        .book = try ui.Button.New("Install VSCode Portable Edition"),
+        .vscode_install = try ui.Label.New("VSCode Edition"),
+        .vscode_dirname_label = try ui.Label.New("Output directory name"),
+        .vscode_dirname = try ui.Entry.New(.Entry),
     };
 
     // Layout
     main_window.SetMargined(true);
     main_window.SetChild(vbox.as_control());
     vbox.SetPadded(true);
-    vbox.Append(app.flight_type.as_control(), .dont_stretch);
-    vbox.Append(app.leave_datetime.as_control(), .dont_stretch);
-    vbox.Append(app.leave_status.as_control(), .dont_stretch);
-    vbox.Append(app.return_datetime.as_control(), .dont_stretch);
-    vbox.Append(app.return_status.as_control(), .dont_stretch);
-    vbox.Append(app.book.as_control(), .dont_stretch);
 
-    // Widget set up
-    app.flight_type.Append("one-way flight");
-    app.flight_type.Append("return flight");
+    vbox.Append(app.vscode_install.as_control(), .dont_stretch);
+    vbox.Append(app.flight_type.as_control(), .dont_stretch);
+    app.flight_type.Append("Stable");
+    app.flight_type.Append("Insiders");
+    vbox.Append(app.vscode_dirname_label.as_control(), .dont_stretch);
+    vbox.Append(app.vscode_dirname.as_control(), .dont_stretch);
+
+    //vbox.Append(app.leave_datetime.as_control(), .dont_stretch);
+    //vbox.Append(app.leave_status.as_control(), .dont_stretch);
+    //vbox.Append(app.return_datetime.as_control(), .dont_stretch);
+    //vbox.Append(app.return_status.as_control(), .dont_stretch);
+    vbox.Append(app.book.as_control(), .dont_stretch);
 
     // Connect signals
     main_window.OnClosing(void, on_closing, null);
@@ -99,6 +114,9 @@ const App = struct {
     return_datetime: *ui.DateTimePicker,
     return_status: *ui.Label,
     book: *ui.Button,
+    vscode_install: *ui.Label,
+    vscode_dirname_label: *ui.Label,
+    vscode_dirname: *ui.Entry,
 
     // data
     leave_date: ?ui.struct_tm = null,
@@ -130,7 +148,8 @@ const App = struct {
         app.state = _oneway_flight;
         app.leave_datetime.as_control().Enable();
         app.return_datetime.as_control().Disable();
-        app.book.as_control().Disable();
+        //app.book.as_control().Disable();
+        app.book.as_control().Enable();
     }
 
     fn _oneway_flight(app: *App, event: *const Event) Error!void {
