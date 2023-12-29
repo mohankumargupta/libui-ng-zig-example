@@ -1,0 +1,3 @@
+[submodule "zig-libui-ng"]
+	path = zig-libui-ng
+	url = https://github.com/desttinghim/zig-libui-ng
