@@ -6,5 +6,7 @@
 // this is the Common Controls 6 manifest
 // TODO set up the string values here
 // 1 is the value of CREATEPROCESS_MANIFEST_RESOURCE_ID and 24 is the value of RT_MANIFEST; we use it directly to avoid needing to share winapi.h with the tests and examples
-1 24 "example.static.manifest"
+
+//1 24 "example.static.manifest"
+1 24 "example.windows.manifest"
 

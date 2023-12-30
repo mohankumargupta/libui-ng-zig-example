@@ -26,7 +26,7 @@ pub fn main() !void {
     //_ = quit;
     //quit.uiMenuItemOnClicked(shouldQuit, null);
 
-    const main_window = try ui.Window.New("VSCode Portable Installer", 320, 240, .hide_menubar);
+    const main_window = try ui.Window.New("VSCode Portable Installer", 800, 600, .hide_menubar);
     const vbox = try ui.Box.New(.Vertical);
 
     var app = App{
