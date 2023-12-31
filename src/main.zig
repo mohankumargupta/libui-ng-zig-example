@@ -17,10 +17,13 @@ const Application = struct {
     const Self = @This();
 };
 
-pub fn uploadClicked(_: *ui.Button, app: ?*Application) void {
-    const result = app.?.main_window.uiOpenFolder();
-    const moo: [*:0]const u8 = @ptrCast(@alignCast(result.?));
-    app.?.label.SetText(moo);
+pub fn uploadClicked(_: *ui.Button, app_opt: ?*Application) void {
+    const app = app_opt orelse @panic("wrong");
+    //const app: *Application = @alignCast(@ptrCast(app_opt orelse @panic("Null userdata pointer")));
+    const result = app.main_window.uiOpenFolder() orelse @panic("Open Folder didnt work");
+    defer ui.FreeText(result);
+    const moo: [*:0]const u8 = @ptrCast(@alignCast(result));
+    app.label.SetText(moo);
 }
 
 pub fn main() !void {
